@@ -58,10 +58,8 @@ var bot_options = {
     clientId: process.env.clientId,
     clientSecret: process.env.clientSecret,
     debug: true,
-    scopes: ['bot'],
-    stats_optout: true,
-    studio_token: process.env.studio_token,
-    studio_command_uri: process.env.studio_command_uri
+    scopes: ['bot', 'channels:write'],
+    stats_optout: true
 };
 
 bot_options.json_file_store = __dirname + '/.data/db/'; // store user data in a simple JSON format
@@ -84,10 +82,8 @@ require("fs").readdirSync(normalizedPath).forEach(function(file) {
 
 function usage_tip() {
     console.log('~~~~~~~~~~');
-    console.log('Botkit Starter Kit');
     console.log('Execute your bot application like this:');
-    console.log('clientId=<MY SLACK CLIENT ID> clientSecret=<MY CLIENT SECRET> PORT=3000 studio_token=<MY BOTKIT STUDIO TOKEN> node bot.js');
+    console.log('clientId=<MY SLACK CLIENT ID> clientSecret=<MY CLIENT SECRET> PORT=3000 node bot.js');
     console.log('Get Slack app credentials here: https://api.slack.com/apps')
-    console.log('Get a Botkit Studio token here: https://studio.botkit.ai/')
     console.log('~~~~~~~~~~');
 }
