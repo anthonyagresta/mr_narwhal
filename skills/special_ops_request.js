@@ -54,7 +54,8 @@ module.exports = function(controller) {
     // workaround for weird team setup misbehavior
     controller.saveTeam(team_config, () => { console.log(`Setup team ${team_config.id}`)});
 
-    setupChannel(botTestingChannel);
+    setupChannel(specialOpsChannel);
+    //setupChannel(botTestingChannel);
 
     controller.on('interactive_message_callback', (bot, message) => {
         if(message.callback_id === 'narwhal_assign') {
