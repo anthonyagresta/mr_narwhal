@@ -13,6 +13,7 @@ COPY skills skills/
 COPY bot.js ./
 COPY .env ./
 
-EXPOSE 3000
+EXPOSE 80
+
 CMD node /srv/narwhal/bot.js
 
