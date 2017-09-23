@@ -26,7 +26,7 @@ const specialOpsChannel = {
         { id: "U04M992HL", name: "boster" },
         { id: "U0F52S742", name: "chad" },
         { id: "U0366QW3A", name: "cjlarose" },
-        { id: "U03N3R7QX", name: "emj" },
+//        { id: "U03N3R7QX", name: "emj" },
         { id: "U035K9P2T", name: "ke" },
         { id: "U3GMFH23W", name: "quy" },
         { id: "U079X6QRJ", name: "robbie" },
