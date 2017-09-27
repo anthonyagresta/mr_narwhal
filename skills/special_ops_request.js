@@ -59,6 +59,15 @@ module.exports = function(controller) {
 
     controller.on('interactive_message_callback', (bot, message) => {
         if(message.callback_id === 'narwhal_assign') {
+            if(hasDevAccepted[message.channel]) {
+                // Someone else already accepted.
+                // Probably timeout or extraneous "yes"
+                // Just clear the button from their UI.
+                bot.replyInteractive(message, {
+                    text: ''
+                });
+                return;
+            }
             if(message.actions[0].value === 'yes') {
                 onDutyDev[message.channel] = message.user;
                 hasDevAccepted[message.channel] = true;
@@ -137,6 +146,27 @@ module.exports = function(controller) {
 
     function assignTimeoutHandler(bot, message) {
         if(!hasDevAccepted[message.channel]) {
+            if(message.retryCount) {
+                if(message.retryCount < 5) {
+                    message.retryCount = message.retryCount + 1;
+                } else {
+                    const retryMsg = {
+                        as_user: true,
+                        user: message.user,
+                        channel: message.channel,
+                        text: `Too many retries, giving up.`
+                    };
+
+                    bot.sendEphemeral(retryMsg, (err, convo) => {
+                        if(err) {
+                            console.log(err);
+                        }
+                    });
+                    return;
+                }
+            } else {
+                message.retryCount = 1;
+            }
             const retryMsg = {
                 as_user: true,
                 user: message.user,
@@ -191,7 +221,7 @@ module.exports = function(controller) {
                 }
             });
 
-            setTimeout(assignTimeoutHandler, 300000, bot, message)
+            setTimeout(assignTimeoutHandler, 15000, bot, message); // TODO: Set this to 5 minutes after testing
 
             const iSentItMsg = {
                 as_user: true,
