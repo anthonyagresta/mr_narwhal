@@ -74,14 +74,14 @@ module.exports = function(controller) {
                 bot.replyInteractive(message, {
                     text: ':sad:'
                 });
-                begForOnCall(bot, message.channel);
+                begForOnCall(bot, message);
             }
         }
     });
 
     controller.hears(['^!assign'], 'ambient,direct_message,direct_mention,mention', (bot, message) => {
         hasDevAccepted[message.channel] = false;
-        begForOnCall(bot, message.channel);
+        begForOnCall(bot, message);
     });
 
     controller.hears(['^!request'], 'ambient,direct_message,direct_mention,mention', function(bot, message) {
@@ -115,8 +115,8 @@ module.exports = function(controller) {
     function popDutyList(channelId, cb) {
         controller.storage.channels.get(channelId, (err, data) => {
             if(err) {
-                console.log(`Failed to get channel data for ${channelId}`)
-                console.log(err)
+                console.log(`Failed to get channel data for ${channelId}`);
+                console.log(err);
             }
             let channelData = data
             let tempDutyList = channelData['dutyList']
@@ -127,15 +127,17 @@ module.exports = function(controller) {
             channelData['dutyList'] = tempDutyList
 
             controller.storage.channels.save(channelData, (err) => {
-                console.log(err)
+                if(err) {
+                    console.log(err);
+                }
             });
             cb(dev, channelId);
         });
     }
 
-    function begForOnCall(bot, channelId) {
-        popDutyList(channelId, (dev, channelId) => {
-            const message = {
+    function begForOnCall(bot, message) {
+        popDutyList(message.channel, (dev, channelId) => {
+            const askMessage = {
                 as_user: true,
                 user: dev.id,
                 channel: channelId,
@@ -164,7 +166,20 @@ module.exports = function(controller) {
                 ]
             };
 
-            bot.sendEphemeral(message, (err, convo) => {
+            bot.sendEphemeral(askMessage, (err, convo) => {
+                if(err) {
+                    console.log(err);
+                }
+            });
+
+            const iSentItMsg = {
+                as_user: true,
+                user: message.user,
+                channel: message.channel,
+                text: `Sent on-call request to <@${dev.id}>`
+            };
+
+            bot.sendEphemeral(iSentItMsg, (err, convo) => {
                 if(err) {
                     console.log(err);
                 }
