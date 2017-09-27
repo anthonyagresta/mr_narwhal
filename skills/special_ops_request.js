@@ -40,10 +40,13 @@ const botTestingChannel = {
     name: 'bot-testing',
     devsList: [
         { id: "U078EJBK2", name: "anthony" },
+        // { id: "U03N3R7QX", name: "emj" },
         // { id: "U0366QW3A", name: "cjlarose" },
         // { id: "U06BYM797", name: "zachmeyer" }
     ]
 }
+
+const REQUEST_ONCALL_TIMEOUT = 300000;
 
 // TODO: Multi-channel support for on-call but not requests
 
@@ -64,7 +67,8 @@ module.exports = function(controller) {
                 // Probably timeout or extraneous "yes"
                 // Just clear the button from their UI.
                 bot.replyInteractive(message, {
-                    text: ''
+                    text: ':timer_clock:',
+                    attachments: []
                 });
                 return;
             }
@@ -91,7 +95,7 @@ module.exports = function(controller) {
     controller.hears(['^!assign'], 'ambient,direct_message,direct_mention,mention', (bot, message) => {
         hasDevAccepted[message.channel] = false;
         begForOnCall(bot, message);
-        setTimeout(assignTimeoutHandler, 15000, bot, message); // TODO: Set this to 5 minutes after testing
+        setTimeout(assignTimeoutHandler, REQUEST_ONCALL_TIMEOUT, bot, message);
     });
 
     controller.hears(['^!request'], 'ambient,direct_message,direct_mention,mention', function(bot, message) {
@@ -172,7 +176,7 @@ module.exports = function(controller) {
                 as_user: true,
                 user: message.user,
                 channel: message.channel,
-                text: `Timed out, asking <@${dev.id}> instead...`
+                text: 'Timed out, asking someone else...'
             };
 
             bot.sendEphemeral(retryMsg, (err, convo) => {
@@ -182,6 +186,7 @@ module.exports = function(controller) {
             });
 
             begForOnCall(bot, message);
+            setTimeout(assignTimeoutHandler, REQUEST_ONCALL_TIMEOUT, bot, message);
         }
     }
 
