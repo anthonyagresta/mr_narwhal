@@ -55,7 +55,7 @@ module.exports = function(controller) {
     controller.saveTeam(team_config, () => { console.log(`Setup team ${team_config.id}`)});
 
     setupChannel(specialOpsChannel);
-    //setupChannel(botTestingChannel);
+    setupChannel(botTestingChannel);
 
     controller.on('interactive_message_callback', (bot, message) => {
         if(message.callback_id === 'narwhal_assign') {
@@ -91,6 +91,7 @@ module.exports = function(controller) {
     controller.hears(['^!assign'], 'ambient,direct_message,direct_mention,mention', (bot, message) => {
         hasDevAccepted[message.channel] = false;
         begForOnCall(bot, message);
+        setTimeout(assignTimeoutHandler, 15000, bot, message); // TODO: Set this to 5 minutes after testing
     });
 
     controller.hears(['^!request'], 'ambient,direct_message,direct_mention,mention', function(bot, message) {
@@ -220,8 +221,6 @@ module.exports = function(controller) {
                     console.log(err);
                 }
             });
-
-            setTimeout(assignTimeoutHandler, 15000, bot, message); // TODO: Set this to 5 minutes after testing
 
             const iSentItMsg = {
                 as_user: true,
