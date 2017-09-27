@@ -135,6 +135,25 @@ module.exports = function(controller) {
         });
     }
 
+    function assignTimeoutHandler(bot, message) {
+        if(!hasDevAccepted[message.channel]) {
+            const retryMsg = {
+                as_user: true,
+                user: message.user,
+                channel: message.channel,
+                text: `Timed out, asking <@${dev.id}> instead...`
+            };
+
+            bot.sendEphemeral(retryMsg, (err, convo) => {
+                if(err) {
+                    console.log(err);
+                }
+            });
+
+            begForOnCall(bot, message);
+        }
+    }
+
     function begForOnCall(bot, message) {
         popDutyList(message.channel, (dev, channelId) => {
             const askMessage = {
@@ -171,6 +190,8 @@ module.exports = function(controller) {
                     console.log(err);
                 }
             });
+
+            setTimeout(assignTimeoutHandler, 300000, bot, message)
 
             const iSentItMsg = {
                 as_user: true,
