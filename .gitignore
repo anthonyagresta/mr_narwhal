@@ -1,6 +1,5 @@
 .db
 .env
 .data
-node_modules
 components/routes/_*
 source_bundle.zip
