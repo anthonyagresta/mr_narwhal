@@ -5,11 +5,12 @@ WORKDIR /srv/narwhal
 
 COPY bin bin/
 COPY package.json yarn.lock ./
-RUN ["/usr/local/bin/node", "./bin/yarn.js", "install","--pure-lockfile"]
+COPY node_modules node_modules/
+RUN ["/usr/local/bin/node", "./bin/yarn.js", "install", "--local", "--frozen-lockfile"]
 
 COPY components components/
 COPY public public/
-COPY skills skills/ 
+COPY skills skills/
 COPY bot.js ./
 COPY .env ./
 
