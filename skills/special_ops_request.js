@@ -18,6 +18,7 @@ const team_config = {
         "createdBy": process.env.createdByUser
     }
 }
+
 const specialOpsChannel = {
     id: 'C6UU136KF',
     name: 'mc-special-ops',
@@ -32,6 +33,11 @@ const specialOpsChannel = {
         { id: "U035K9SMZ", name: "steveklebanoff" },
         { id: "U06BYM797", name: "zachmeyer" }
     ]
+}
+
+const ESCALATIONS = {
+    id: "S3PP2NX6W",
+    name: "escalations"
 }
 
 const botTestingChannel = {
@@ -98,17 +104,11 @@ module.exports = function(controller) {
     });
 
     controller.hears(['^!request'], 'ambient,direct_message,direct_mention,mention', function(bot, message) {
-        if(hasDevAccepted[message.channel] && onDutyDev[message.channel]) {
-            requestPing = {
-                text: `Paging Special Operator <@${onDutyDev[message.channel]}>!`,
-                channel: message.channel
-            }
-            bot.say(requestPing);
-        } else {
-            bot.reply(message, {
-                text: "Sorry, nobody has currently accepted on-call duty! :scream:\n I'll assign someone if you type `!assign` ."
-            })
+        requestPing = {
+            text: `Paging the Escalations Team <@${ESCALATIONS.name}>!`,
+            channel: message.channel
         }
+        bot.say(requestPing);
     });
 
     function setupChannel(channelStruct) {
